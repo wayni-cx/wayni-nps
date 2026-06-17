@@ -201,7 +201,7 @@
 
   const card = document.getElementById("card");
 
-  function stepsHTML(ctive) {
+  function stepsHTML(active) {
     function dotClass(n)  { return n < active ? "done" : n === active ? "active" : "pending"; }
     function lineClass(n) { return n < active ? "done" : ""; }
     return `<div class="steps">
