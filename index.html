@@ -27,11 +27,6 @@
       text-align: center;
     }
 
-    .logo {
-      width: 90px;
-      margin-bottom: 18px;
-    }
-
     .step { display: none; }
     .step.active { display: block; }
 
@@ -47,40 +42,6 @@
       color: #666;
       margin-bottom: 28px;
       line-height: 1.5;
-    }
-
-    /* ── ESTRELLAS CSAT ── */
-    .stars {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 8px;
-      flex-direction: row-reverse;
-    }
-
-    .stars input { display: none; }
-
-    .stars label {
-      font-size: 2.8rem;
-      cursor: pointer;
-      color: #ddd;
-      transition: color 0.15s;
-      line-height: 1;
-    }
-
-    .stars input:checked ~ label,
-    .stars label:hover,
-    .stars label:hover ~ label {
-      color: #f5a623;
-    }
-
-    .star-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: #999;
-      margin-bottom: 24px;
-      padding: 0 4px;
     }
 
     /* ── ESCALA NPS ── */
@@ -109,39 +70,6 @@
     .nps-scale button.selected { background: #5b5fe8; color: #fff; border-color: #5b5fe8; }
 
     .nps-labels {
-      display: flex;
-      justify-content: space-between;
-      font-size: 0.75rem;
-      color: #999;
-      margin-bottom: 24px;
-    }
-
-    /* ── ESCALA CES ── */
-    .ces-scale {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-
-    .ces-scale button {
-      width: 52px;
-      height: 52px;
-      border-radius: 12px;
-      border: 2px solid #e0e0e0;
-      background: #fff;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: #444;
-      transition: all 0.15s;
-    }
-
-    .ces-scale button:hover { border-color: #5b5fe8; color: #5b5fe8; }
-    .ces-scale button.selected { background: #5b5fe8; color: #fff; border-color: #5b5fe8; }
-
-    .ces-labels {
       display: flex;
       justify-content: space-between;
       font-size: 0.75rem;
@@ -256,23 +184,20 @@
 <body>
 
 <div class="card">
-  <img class="logo" src="https://i.imgur.com/yourlogo.png" alt="Wayni"
-       onerror="this.style.display='none'" />
 
-  <!-- Progreso -->
+  <!-- Progreso: 4 pasos (CSAT confirm, FCR, NPS, comentario) -->
   <div class="progress" id="progress">
     <div class="progress-dot active" id="dot-0"></div>
     <div class="progress-dot" id="dot-1"></div>
     <div class="progress-dot" id="dot-2"></div>
     <div class="progress-dot" id="dot-3"></div>
-    <div class="progress-dot" id="dot-4"></div>
   </div>
 
   <!-- ── PASO 0: Confirmación CSAT ── -->
   <div class="step active" id="step-0">
     <div class="csat-badge" id="csat-emoji">⭐</div>
     <h2>¡Gracias por tu calificación!</h2>
-    <p class="csat-confirm-text" id="csat-confirm-text">
+    <p class="csat-confirm-text">
       Nos dijiste que la atención fue <strong id="csat-label-text"></strong>.<br/>
       Ahora queremos hacerte unas preguntas más.
     </p>
@@ -290,26 +215,8 @@
     <button class="btn-next" id="btn-fcr" onclick="goStep(2)" disabled>Continuar →</button>
   </div>
 
-  <!-- ── PASO 2: CES ── -->
+  <!-- ── PASO 2: NPS ── -->
   <div class="step" id="step-2">
-    <h2>¿Qué tan fácil fue resolver tu consulta?</h2>
-    <p class="subtitle">1 = muy difícil &nbsp;·&nbsp; 5 = muy fácil</p>
-    <div class="ces-scale">
-      <button onclick="selectCES(1)">1</button>
-      <button onclick="selectCES(2)">2</button>
-      <button onclick="selectCES(3)">3</button>
-      <button onclick="selectCES(4)">4</button>
-      <button onclick="selectCES(5)">5</button>
-    </div>
-    <div class="ces-labels">
-      <span>Muy difícil</span>
-      <span>Muy fácil</span>
-    </div>
-    <button class="btn-next" id="btn-ces" onclick="goStep(3)" disabled>Continuar →</button>
-  </div>
-
-  <!-- ── PASO 3: NPS ── -->
-  <div class="step" id="step-3">
     <h2>¿Qué tan probable es que recomiendes Wayni a un amigo?</h2>
     <p class="subtitle">0 = nada probable &nbsp;·&nbsp; 10 = muy probable</p>
     <div class="nps-scale">
@@ -329,18 +236,18 @@
       <span>Nada probable</span>
       <span>Muy probable</span>
     </div>
-    <button class="btn-next" id="btn-nps" onclick="goStep(4)" disabled>Continuar →</button>
+    <button class="btn-next" id="btn-nps" onclick="handleNPS()" disabled>Continuar →</button>
   </div>
 
-  <!-- ── PASO 4: Comentario (condicional) ── -->
-  <div class="step" id="step-4">
+  <!-- ── PASO 3: Comentario (solo NPS ≤ 8) ── -->
+  <div class="step" id="step-3">
     <h2 id="comment-title">Contanos más</h2>
     <p class="subtitle" id="comment-subtitle">Tu opinión nos ayuda a mejorar.</p>
     <textarea id="comment-text" placeholder="Escribí tu comentario aquí..."></textarea>
     <button class="btn-next" onclick="submitForm()">Enviar →</button>
   </div>
 
-  <!-- ── PASO 5: Final ── -->
+  <!-- ── FINAL ── -->
   <div class="step" id="step-final">
     <div class="checkmark">🎉</div>
     <h2>¡Muchas gracias!</h2>
@@ -352,7 +259,7 @@
         ¿Te gustaría dejarnos una reseña en Google Play?
       </p>
       <a class="btn-play"
-         href="https://play.google.com/store/apps/details?id=com.wayni.app"
+         href="https://onelink.to/b4nrv9"
          target="_blank">
         ⭐ Calificanos en Play Store
       </a>
@@ -362,7 +269,6 @@
 </div>
 
 <script>
-  // ── Leer params de URL ──────────────────────────────────────
   const urlParams  = new URLSearchParams(window.location.search);
   const ticketId   = urlParams.get("ticket_id") || "";
   const agentName  = urlParams.get("agent")     || "";
@@ -370,22 +276,17 @@
 
   const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyBNKOtwnhsT7kGqq_1yjWDaN37HIZM-BbpFyP8aGFmMgWuKKS84D9SI42QwbhLL_3faw/exec";
 
-  // Estado
   let selectedFCR = "";
-  let selectedCES = 0;
   let selectedNPS = null;
 
-  // Etiquetas CSAT
-  const csatEmojis  = ["", "😞", "😕", "😐", "😊", "🤩"];
-  const csatLabels  = ["", "muy mala", "mala", "regular", "buena", "excelente"];
+  const csatEmojis = ["", "😞", "😕", "😐", "😊", "🤩"];
+  const csatLabels = ["", "muy mala", "mala", "regular", "buena", "excelente"];
 
-  // ── Init ───────────────────────────────────────────────────
   window.onload = function() {
     document.getElementById("csat-emoji").textContent = csatEmojis[csatScore] || "⭐";
     document.getElementById("csat-label-text").textContent = csatLabels[csatScore] || csatScore;
   };
 
-  // ── Navegación ─────────────────────────────────────────────
   function goStep(n) {
     document.querySelectorAll(".step").forEach(function(s) { s.classList.remove("active"); });
     document.getElementById("step-" + n).classList.add("active");
@@ -393,7 +294,7 @@
   }
 
   function updateProgress(current) {
-    for (var i = 0; i <= 4; i++) {
+    for (var i = 0; i <= 3; i++) {
       var dot = document.getElementById("dot-" + i);
       if (!dot) continue;
       dot.classList.remove("active", "done");
@@ -402,7 +303,6 @@
     }
   }
 
-  // ── FCR ────────────────────────────────────────────────────
   function selectFCR(val) {
     selectedFCR = val;
     document.getElementById("fcr-si").classList.toggle("selected", val === "Si");
@@ -410,16 +310,6 @@
     document.getElementById("btn-fcr").disabled = false;
   }
 
-  // ── CES ────────────────────────────────────────────────────
-  function selectCES(val) {
-    selectedCES = val;
-    document.querySelectorAll(".ces-scale button").forEach(function(b, i) {
-      b.classList.toggle("selected", i + 1 === val);
-    });
-    document.getElementById("btn-ces").disabled = false;
-  }
-
-  // ── NPS ────────────────────────────────────────────────────
   function selectNPS(val) {
     selectedNPS = val;
     document.querySelectorAll(".nps-scale button").forEach(function(b, i) {
@@ -428,48 +318,46 @@
     document.getElementById("btn-nps").disabled = false;
   }
 
-  // ── Paso 4: configurar comentario según NPS ────────────────
-  function goStep(n) {
-    if (n === 4) {
+  // NPS ≥ 9 → enviar y mostrar Play Store directo (sin comentario)
+  // NPS ≤ 8 → ir al paso de comentario
+  function handleNPS() {
+    if (selectedNPS >= 9) {
+      submitForm(); // envía sin comentario y muestra final con Play Store
+    } else {
       var title    = document.getElementById("comment-title");
       var subtitle = document.getElementById("comment-subtitle");
       if (selectedNPS <= 6) {
         title.textContent    = "¿Qué podríamos haber hecho mejor?";
         subtitle.textContent = "Tu opinión llega directamente al equipo de mejora.";
-      } else if (selectedNPS >= 9) {
-        title.textContent    = "¡Nos alegra mucho! ¿Querés contarnos qué fue lo que más te gustó?";
-        subtitle.textContent = "Tu experiencia nos inspira a seguir mejorando.";
       } else {
         title.textContent    = "¿Hay algo que podríamos mejorar?";
         subtitle.textContent = "Todo feedback es bienvenido.";
       }
+      goStep(3);
     }
-    document.querySelectorAll(".step").forEach(function(s) { s.classList.remove("active"); });
-    document.getElementById("step-" + n).classList.add("active");
-    updateProgress(n);
   }
 
-  // ── Envío ──────────────────────────────────────────────────
   function submitForm() {
-    var comment = document.getElementById("comment-text").value.trim();
+    var comment = (document.getElementById("comment-text") ? document.getElementById("comment-text").value.trim() : "");
 
     var formData = new FormData();
     formData.append("ticket_id", ticketId);
     formData.append("agent",     agentName);
     formData.append("csat",      csatScore);
     formData.append("fcr",       selectedFCR);
-    formData.append("ces",       selectedCES);
+    formData.append("ces",       ""); // CES eliminado, se envía vacío
     formData.append("nps",       selectedNPS);
     formData.append("comment",   comment);
 
     fetch(WEBHOOK_URL, { method: "POST", body: formData })
-      .catch(function() { /* silencioso: igual mostramos el final */ });
+      .catch(function() { /* silencioso */ });
 
-    // Mostrar paso final
+    // Mostrar final
     document.querySelectorAll(".step").forEach(function(s) { s.classList.remove("active"); });
     document.getElementById("step-final").classList.add("active");
     document.getElementById("progress").style.display = "none";
 
+    // Play Store solo para promotores (NPS ≥ 9)
     if (selectedNPS >= 9) {
       document.getElementById("playstore-block").style.display = "block";
     }
